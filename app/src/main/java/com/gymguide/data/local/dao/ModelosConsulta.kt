@@ -66,9 +66,8 @@ data class RutinaCompleta(
     )
     val dias: List<DiaConDetalles>
 )
-
-// Datos recibidos desde el formulario
 data class DiaFormulario(
+    val numeroDia: Int = 0,
     val nombreDia: String,
-    val detalles: List<DetalleRutina>
+    val detalles: MutableList<DetalleRutina> = mutableListOf()
 )

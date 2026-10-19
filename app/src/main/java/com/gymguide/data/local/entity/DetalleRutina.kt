@@ -38,10 +38,10 @@ import androidx.room.PrimaryKey
 data class DetalleRutina(
     @PrimaryKey(autoGenerate = true)
     @ColumnInfo(name = "id_detalle") val idDetalle: Int = 0,
-    @ColumnInfo(name = "id_dia") val idDia: Int,
-    @ColumnInfo(name = "id_ejercicio") val idEjercicio: Int,
+    @ColumnInfo(name = "id_dia") val idDia: Int = 0,
+    @ColumnInfo(name = "id_ejercicio") val idEjercicio: Int = 1,
     @ColumnInfo(name = "series") val series: Int,
     @ColumnInfo(name = "repeticiones") val repeticiones: Int,
     @ColumnInfo(name = "descanso_segundos") val descansoSegundos: Int,
-    @ColumnInfo(name = "orden") val orden: Int
+    @ColumnInfo(name = "orden") val orden: Int = 0
 )

@@ -29,8 +29,8 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gymguide.data.local.dao.DiaConDetalles
-import com.gymguide.data.local.dao.RutinaCompleta
+import com.gymguide.data.local.entity.DiaConEjercicios  // ✅ Tipo correcto
+import com.gymguide.data.local.entity.RutinaCompleta
 
 // Paleta de colores — igual al resto de pantallas
 private val Primary = Color(0xFF6B4EFF)
@@ -93,8 +93,8 @@ fun DetalleRutinaScreen(
                     fontSize = 15.sp
                 )
             } else {
-                val rutina = rutinaCompleta!!.rutina
-                val dias = rutinaCompleta!!.dias
+                val datos: RutinaCompleta = rutinaCompleta!!
+                val dias: List<DiaConEjercicios> = datos.dias
 
                 // Tarjeta principal con datos de la rutina
                 Card(
@@ -110,18 +110,18 @@ fun DetalleRutinaScreen(
                 ) {
                     Column(modifier = Modifier.padding(24.dp)) {
                         Text(
-                            rutina.nombre,
+                            datos.rutina.nombre,
                             style = MaterialTheme.typography.headlineMedium,
                             fontWeight = FontWeight.Bold,
                             color = TextDark
                         )
                         Text(
-                            "Objetivo: ${rutina.objetivo}",
+                            "Objetivo: ${datos.rutina.objetivo}",
                             color = TextLight,
                             fontSize = 14.sp,
                             modifier = Modifier.padding(top = 4.dp)
                         )
-                        if (rutina.activa == 1) {
+                        if (datos.rutina.activa == 1) {
                             Text(
                                 "✓ RUTINA ACTIVA",
                                 color = ActiveGreen,
@@ -135,7 +135,10 @@ fun DetalleRutinaScreen(
 
                 Spacer(Modifier.height(16.dp))
 
-                LazyColumn(verticalArrangement = Arrangement.spacedBy(12.dp)) {
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(12.dp),
+                    modifier = Modifier.fillMaxSize()
+                ) {
                     items(dias) { dia ->
                         TarjetaDia(dia = dia)
                     }
@@ -146,7 +149,7 @@ fun DetalleRutinaScreen(
 }
 
 @Composable
-fun TarjetaDia(dia: DiaConDetalles) {
+fun TarjetaDia(dia: DiaConEjercicios) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,7 +171,7 @@ fun TarjetaDia(dia: DiaConDetalles) {
                 color = Primary
             )
 
-            if (dia.detalles.isEmpty()) {
+            if (dia.ejercicios.isEmpty()) {
                 Text(
                     "Sin ejercicios asignados",
                     color = TextLight,
@@ -176,9 +179,9 @@ fun TarjetaDia(dia: DiaConDetalles) {
                     fontSize = 14.sp
                 )
             } else {
-                dia.detalles.forEach { _ ->
+                dia.ejercicios.forEach { ejercicio ->
                     Text(
-                        "• Ejercicio",
+                        "• ${ejercicio.detalle.series}s × ${ejercicio.detalle.repeticiones}r | ${ejercicio.detalle.descansoSegundos}s",
                         color = TextDark,
                         modifier = Modifier.padding(top = 4.dp),
                         fontSize = 14.sp

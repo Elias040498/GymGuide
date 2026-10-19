@@ -3,13 +3,13 @@ package com.gymguide.ui.screens.rutinas
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import androidx.lifecycle.viewModelScope
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import com.gymguide.data.local.database.AppDatabase
-import com.gymguide.data.local.dao.DiaFormulario
-import com.gymguide.data.local.dao.RutinaCompleta  // ✅ Corregido: está en dao, NO en entity
 import com.gymguide.data.local.entity.Rutina
+import com.gymguide.data.local.entity.RutinaCompleta
+import com.gymguide.data.local.entity.DiaFormulario
 import com.gymguide.data.repository.RutinaRepository
 import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
@@ -37,7 +37,7 @@ class RutinasViewModel(
     private val _uiState = MutableStateFlow(RutinasUiState())
     val uiState = _uiState.asStateFlow()
 
-    // ✅ Estado para detalle de rutina
+    // ✅ Estado para detalle de rutina — corregido el tipo
     private val _rutinaCompleta = mutableStateOf<RutinaCompleta?>(null)
     val rutinaCompleta: androidx.compose.runtime.State<RutinaCompleta?> = _rutinaCompleta
 

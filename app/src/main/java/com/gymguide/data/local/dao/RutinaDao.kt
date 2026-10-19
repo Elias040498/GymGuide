@@ -7,6 +7,8 @@ import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
+import com.gymguide.data.local.entity.DiaFormulario
+import com.gymguide.data.local.entity.RutinaCompleta
 import com.gymguide.data.local.entity.DetalleRutina
 import com.gymguide.data.local.entity.DiaRutina
 import com.gymguide.data.local.entity.Rutina
@@ -136,17 +138,25 @@ interface RutinaDao {
     @Transaction
     suspend fun guardarRutinaCompleta(
         rutina: Rutina,
-        dias: List<DiaFormulario>
+        dias: List<DiaFormulario>  // Desde entity
     ): Long {
+        val idRutina = insertarRutina(rutina)
 
-        val idRutina = insertRutina(rutina).toInt()
+        dias.forEach { diaForm ->
+            val dia = DiaRutina(
+                idRutina = idRutina.toInt(),
+                numeroDia = diaForm.numeroDia,  // Ahora existe
+                nombreDia = diaForm.nombreDia
+            )
+            val idDia = insertarDia(dia)
 
-        insertDiasConDetalles(
-            idRutina = idRutina,
-            dias = dias
-        )
-
-        return idRutina.toLong()
+            diaForm.detalles.forEach { detalle ->
+                insertarDetalle(
+                    detalle.copy(idDia = idDia.toInt())
+                )
+            }
+        }
+        return idRutina
     }
 
     // ==========================================
@@ -279,5 +289,28 @@ interface RutinaDao {
     suspend fun activar(
         idRutina: Int
     )
+
+
+    // ==========================================
+    //MÉTODOS PARA GUARDAR RUTINAS
+    // ==========================================
+
+    @Insert
+    suspend fun insertarRutina(rutina: Rutina): Long
+
+    @Insert
+    suspend fun insertarDia(dia: DiaRutina): Long
+
+    @Insert
+    suspend fun insertarDetalle(detalle: DetalleRutina)
+
+    @Query("SELECT * FROM rutina WHERE id_rutina = :id")
+    suspend fun obtenerPorId(id: Int): Rutina?
+
+    @Query("SELECT * FROM dia_rutina WHERE id_rutina = :idRutina")
+    suspend fun obtenerDiasDeRutina(idRutina: Int): List<DiaRutina>
+
+    @Query("SELECT * FROM detalle_rutina WHERE id_dia = :idDia")
+    suspend fun obtenerDetallesDeDia(idDia: Int): List<DetalleRutina>
 }
 

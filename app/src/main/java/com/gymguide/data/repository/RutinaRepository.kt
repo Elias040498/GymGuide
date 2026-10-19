@@ -1,27 +1,29 @@
 package com.gymguide.data.repository
 
 import com.gymguide.data.local.dao.RutinaDao
-import com.gymguide.data.local.dao.DiaFormulario  // MISMO PAQUETE DEL DAO
+import com.gymguide.data.local.entity.DiaFormulario
 import com.gymguide.data.local.entity.Rutina
+import com.gymguide.data.local.entity.RutinaCompleta
 import kotlinx.coroutines.flow.Flow
 
 class RutinaRepository(
     private val rutinaDao: RutinaDao
 ) {
-    fun observarRutinas(filtro: String): Flow<List<Rutina>> =
+    // Observar todas las rutinas
+    fun observarRutinas(filtro: String = ""): Flow<List<Rutina>> =
         rutinaDao.observarResultinas(filtro)
 
-    suspend fun obtenerRutinaActiva(): Rutina? =
-        rutinaDao.getRutinaActiva()
-
-    suspend fun obtenerRutinaCompleta(idRutina: Int) =
+    // AQUÍ ESTÁ EL PROBLEMA: Cambia el nombre según tu DAO
+    suspend fun obtenerRutinaCompleta(idRutina: Int): RutinaCompleta? =
         rutinaDao.getRutinaCompleta(idRutina)
 
+    // Guardar rutina completa
     suspend fun guardarRutinaCompleta(
         rutina: Rutina,
         dias: List<DiaFormulario>
     ): Long = rutinaDao.guardarRutinaCompleta(rutina, dias)
 
+    // Editar rutina completa — advertencia NO es error
     suspend fun editarRutinaCompleta(
         rutina: Rutina,
         dias: List<DiaFormulario>
